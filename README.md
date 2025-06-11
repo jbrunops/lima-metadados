@@ -75,10 +75,4 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 - Verifique se o arquivo não está corrompido
 - Alguns formatos específicos podem não ser suportados
 
-## 📞 Suporte
-
-Para reportar problemas ou sugestões, entre em contato através do GitHub.
-
----
-
-**Desenvolvido com ❤️ para proteger sua privacidade** 
+ 
