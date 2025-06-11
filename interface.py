@@ -8,7 +8,7 @@ class LimpaMetadadosApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Limpa Metadados")
-        self.root.geometry("700x550")
+        self.root.geometry("750x600")
         self.root.resizable(True, True)
         self.root.configure(bg='#f0f0f0')
         
@@ -51,16 +51,16 @@ class LimpaMetadadosApp:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.lista_arquivos.configure(yscrollcommand=scrollbar.set)
         
-        # Botões de arquivo
+        # Botões de arquivo com tamanhos adequados
         botoes_arquivo_frame = ttk.Frame(arquivo_frame)
         botoes_arquivo_frame.pack(fill=tk.X)
         
         ttk.Button(botoes_arquivo_frame, text="Adicionar Arquivos", 
-                  command=self.selecionar_arquivos, width=15).pack(side=tk.LEFT, padx=(0, 10))
+                  command=self.selecionar_arquivos, width=20).pack(side=tk.LEFT, padx=(0, 10))
         ttk.Button(botoes_arquivo_frame, text="Remover", 
-                  command=self.remover_arquivo, width=10).pack(side=tk.LEFT, padx=(0, 10))
+                  command=self.remover_arquivo, width=15).pack(side=tk.LEFT, padx=(0, 10))
         ttk.Button(botoes_arquivo_frame, text="Limpar Tudo", 
-                  command=self.limpar_lista, width=10).pack(side=tk.LEFT)
+                  command=self.limpar_lista, width=15).pack(side=tk.LEFT)
         
         # Seção de configurações
         config_frame = ttk.LabelFrame(main_frame, text="Configurações", padding=15)
@@ -75,7 +75,7 @@ class LimpaMetadadosApp:
                                           foreground="gray", font=("Segoe UI", 9))
         self.label_pasta_saida.pack(side=tk.LEFT, padx=(10, 0), fill=tk.X, expand=True)
         ttk.Button(pasta_frame, text="Alterar", command=self.escolher_pasta_saida, 
-                  width=8).pack(side=tk.RIGHT)
+                  width=12).pack(side=tk.RIGHT)
         
         # Seção de processamento
         processo_frame = ttk.LabelFrame(main_frame, text="Processamento", padding=15)
@@ -95,12 +95,12 @@ class LimpaMetadadosApp:
         botoes_frame = ttk.Frame(main_frame)
         botoes_frame.pack(fill=tk.X, pady=(0, 15))
         
-        self.btn_processar = ttk.Button(botoes_frame, text="Processar", 
-                                       command=self.processar_arquivos, width=15)
+        self.btn_processar = ttk.Button(botoes_frame, text="Processar Arquivos", 
+                                       command=self.processar_arquivos, width=20)
         self.btn_processar.pack(side=tk.LEFT, padx=(0, 10))
         
         ttk.Button(botoes_frame, text="Ver Metadados", 
-                  command=self.visualizar_metadados, width=15).pack(side=tk.LEFT)
+                  command=self.visualizar_metadados, width=20).pack(side=tk.LEFT)
         
         # Log
         log_frame = ttk.LabelFrame(main_frame, text="Log", padding=10)
@@ -188,9 +188,11 @@ class LimpaMetadadosApp:
             self.processando = True
             self.btn_processar.config(state='disabled', text="Processando...")
             
+            resultados = []
             try:
                 total = len(self.arquivos_selecionados)
                 sucessos = 0
+                erros = 0
                 
                 self.atualizar_status("Iniciando processamento...", 0)
                 self.log(f"Processando {total} arquivo(s)...")
@@ -205,24 +207,35 @@ class LimpaMetadadosApp:
                         nome_limpo = os.path.splitext(nome)[0] + "_limpo.mp4"
                         arquivo_saida = os.path.join(self.pasta_saida, nome_limpo)
                     else:
-                        arquivo_saida = None
+                        pasta_original = os.path.dirname(arquivo)
+                        nome_limpo = os.path.splitext(nome)[0] + "_limpo.mp4"
+                        arquivo_saida = os.path.join(pasta_original, nome_limpo)
                     
                     sucesso, mensagem = limpar_metadados(arquivo, arquivo_saida)
+                    
+                    resultado = {
+                        'arquivo_original': nome,
+                        'arquivo_limpo': os.path.basename(arquivo_saida) if sucesso else None,
+                        'sucesso': sucesso,
+                        'mensagem': mensagem,
+                        'tamanho_original': self.obter_tamanho_arquivo(arquivo),
+                        'tamanho_limpo': self.obter_tamanho_arquivo(arquivo_saida) if sucesso and os.path.exists(arquivo_saida) else None
+                    }
+                    
+                    resultados.append(resultado)
                     
                     if sucesso:
                         sucessos += 1
                         self.log(f"OK: {nome}")
                     else:
+                        erros += 1
                         self.log(f"ERRO: {nome} - {mensagem}")
                 
                 self.atualizar_status("Processamento concluído", 100)
-                self.log(f"Concluído: {sucessos}/{total} arquivos processados")
+                self.log(f"Concluído: {sucessos} sucessos, {erros} erros")
                 
-                if sucessos == total:
-                    messagebox.showinfo("Sucesso", f"Todos os {total} arquivos foram processados")
-                else:
-                    messagebox.showwarning("Concluído com Avisos", 
-                                         f"{sucessos} de {total} arquivos processados.\nVerifique o log para detalhes.")
+                # Mostrar modal de resultados
+                self.mostrar_resultados_finais(resultados, sucessos, erros)
                 
             except Exception as e:
                 self.log(f"ERRO CRÍTICO: {str(e)}")
@@ -231,10 +244,129 @@ class LimpaMetadadosApp:
             
             finally:
                 self.processando = False
-                self.btn_processar.config(state='normal', text="Processar")
+                self.btn_processar.config(state='normal', text="Processar Arquivos")
         
         thread = threading.Thread(target=processar, daemon=True)
         thread.start()
+    
+    def obter_tamanho_arquivo(self, caminho):
+        try:
+            if os.path.exists(caminho):
+                tamanho = os.path.getsize(caminho)
+                return self.formatar_tamanho(tamanho)
+            return "N/A"
+        except:
+            return "N/A"
+    
+    def formatar_tamanho(self, bytes):
+        for unidade in ['B', 'KB', 'MB', 'GB']:
+            if bytes < 1024.0:
+                return f"{bytes:.1f} {unidade}"
+            bytes /= 1024.0
+        return f"{bytes:.1f} TB"
+    
+    def mostrar_resultados_finais(self, resultados, sucessos, erros):
+        # Criar janela modal de resultados
+        janela = tk.Toplevel(self.root)
+        janela.title("Resultados do Processamento")
+        janela.geometry("800x600")
+        janela.resizable(True, True)
+        janela.transient(self.root)
+        janela.grab_set()
+        
+        # Centralizar janela
+        janela.update_idletasks()
+        x = (janela.winfo_screenwidth() // 2) - (800 // 2)
+        y = (janela.winfo_screenheight() // 2) - (600 // 2)
+        janela.geometry(f"800x600+{x}+{y}")
+        
+        main_frame = ttk.Frame(janela, padding=20)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título
+        titulo = ttk.Label(main_frame, text="Processamento Concluído", 
+                          font=("Segoe UI", 16, "bold"))
+        titulo.pack(pady=(0, 20))
+        
+        # Resumo
+        resumo_frame = ttk.Frame(main_frame)
+        resumo_frame.pack(fill=tk.X, pady=(0, 20))
+        
+        total = len(resultados)
+        
+        if sucessos == total:
+            cor_status = "green"
+            texto_status = "Todos os arquivos processados com sucesso!"
+        elif sucessos > 0:
+            cor_status = "orange"
+            texto_status = f"{sucessos} de {total} arquivos processados com sucesso"
+        else:
+            cor_status = "red"
+            texto_status = "Nenhum arquivo foi processado com sucesso"
+        
+        status_label = ttk.Label(resumo_frame, text=texto_status, 
+                                font=("Segoe UI", 12, "bold"), foreground=cor_status)
+        status_label.pack()
+        
+        stats_label = ttk.Label(resumo_frame, 
+                               text=f"Total: {total} | Sucessos: {sucessos} | Erros: {erros}",
+                               font=("Segoe UI", 10))
+        stats_label.pack(pady=(5, 0))
+        
+        # Tabela de resultados
+        tabela_frame = ttk.Frame(main_frame)
+        tabela_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 20))
+        
+        # Criar treeview para mostrar resultados detalhados
+        colunas = ("status", "original", "limpo", "tamanho_antes", "tamanho_depois")
+        tree = ttk.Treeview(tabela_frame, columns=colunas, show="headings", height=15)
+        
+        # Configurar colunas
+        tree.heading("status", text="Status")
+        tree.heading("original", text="Arquivo Original")
+        tree.heading("limpo", text="Arquivo Limpo")
+        tree.heading("tamanho_antes", text="Tamanho Antes")
+        tree.heading("tamanho_depois", text="Tamanho Depois")
+        
+        tree.column("status", width=80, anchor="center")
+        tree.column("original", width=200)
+        tree.column("limpo", width=200)
+        tree.column("tamanho_antes", width=100, anchor="center")
+        tree.column("tamanho_depois", width=100, anchor="center")
+        
+        # Adicionar resultados
+        for resultado in resultados:
+            status = "✓ OK" if resultado['sucesso'] else "✗ ERRO"
+            original = resultado['arquivo_original']
+            limpo = resultado['arquivo_limpo'] or "N/A"
+            tamanho_antes = resultado['tamanho_original']
+            tamanho_depois = resultado['tamanho_limpo'] or "N/A"
+            
+            tree.insert("", "end", values=(status, original, limpo, tamanho_antes, tamanho_depois))
+        
+        # Scrollbar para tabela
+        scrollbar_tabela = ttk.Scrollbar(tabela_frame, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar_tabela.set)
+        
+        tree.pack(side="left", fill="both", expand=True)
+        scrollbar_tabela.pack(side="right", fill="y")
+        
+        # Botões
+        botoes_frame = ttk.Frame(main_frame)
+        botoes_frame.pack(fill=tk.X)
+        
+        ttk.Button(botoes_frame, text="Abrir Pasta de Destino", 
+                  command=lambda: self.abrir_pasta_destino(), width=20).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(botoes_frame, text="Fechar", 
+                  command=janela.destroy, width=15).pack(side=tk.RIGHT)
+    
+    def abrir_pasta_destino(self):
+        if self.pasta_saida and os.path.exists(self.pasta_saida):
+            os.startfile(self.pasta_saida)
+        elif self.arquivos_selecionados:
+            pasta = os.path.dirname(self.arquivos_selecionados[0])
+            if os.path.exists(pasta):
+                os.startfile(pasta)
     
     def visualizar_metadados(self):
         selecionado = self.lista_arquivos.curselection()
@@ -252,13 +384,14 @@ class LimpaMetadadosApp:
             def mostrar_janela():
                 janela = tk.Toplevel(self.root)
                 janela.title(f"Metadados - {nome}")
-                janela.geometry("600x450")
+                janela.geometry("700x500")
                 janela.resizable(True, True)
                 
                 frame = ttk.Frame(janela, padding=15)
                 frame.pack(fill=tk.BOTH, expand=True)
                 
-                ttk.Label(frame, text=f"Arquivo: {nome}", font=("Segoe UI", 11, "bold")).pack(anchor=tk.W, pady=(0, 10))
+                ttk.Label(frame, text=f"Arquivo: {nome}", 
+                         font=("Segoe UI", 11, "bold")).pack(anchor=tk.W, pady=(0, 10))
                 
                 text_widget = scrolledtext.ScrolledText(frame, wrap=tk.WORD, font=("Consolas", 9))
                 text_widget.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
