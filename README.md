@@ -6,7 +6,7 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ## Download
 
-[Baixar LimpaMetadados.exe](https://github.com/jbrunops/lima-metadados/releases/latest/download/LimpaMetadados.exe)
+[Baixar LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/latest/download/LimpaMetadados.exe)
 
 ## Como Usar
 
