@@ -7,109 +7,151 @@ from core import verificar_ffmpeg, limpar_metadados, processar_lote, validar_arq
 class LimpaMetadadosApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Limpa Metadados - Removedor de Metadados de Vídeos")
-        self.root.geometry("800x600")
+        self.root.title("Limpa Metadados")
+        self.root.geometry("700x550")
         self.root.resizable(True, True)
+        self.root.configure(bg='#f0f0f0')
         
         self.arquivos_selecionados = []
         self.pasta_saida = None
+        self.processando = False
         
         self.criar_interface()
         self.verificar_ffmpeg_startup()
     
     def criar_interface(self):
-        main_frame = ttk.Frame(self.root, padding="10")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Container principal
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
         
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=1)
-        main_frame.rowconfigure(2, weight=1)
-        main_frame.rowconfigure(4, weight=1)
+        # Título
+        titulo_frame = ttk.Frame(main_frame)
+        titulo_frame.pack(fill=tk.X, pady=(0, 20))
         
-        titulo = ttk.Label(main_frame, text="Limpa Metadados", font=("Arial", 16, "bold"))
-        titulo.grid(row=0, column=0, columnspan=3, pady=(0, 20))
+        titulo = ttk.Label(titulo_frame, text="Limpa Metadados", font=("Segoe UI", 18, "bold"))
+        titulo.pack()
         
-        ttk.Label(main_frame, text="Arquivos Selecionados:").grid(row=1, column=0, sticky=tk.W, pady=(0, 5))
+        subtitulo = ttk.Label(titulo_frame, text="Remover metadados de arquivos de vídeo", 
+                             font=("Segoe UI", 10), foreground="gray")
+        subtitulo.pack()
         
-        frame_arquivos = ttk.Frame(main_frame)
-        frame_arquivos.grid(row=2, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
-        frame_arquivos.columnconfigure(0, weight=1)
-        frame_arquivos.rowconfigure(0, weight=1)
+        # Seção de arquivos
+        arquivo_frame = ttk.LabelFrame(main_frame, text="Arquivos", padding=15)
+        arquivo_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
         
-        self.lista_arquivos = tk.Listbox(frame_arquivos, height=8)
-        self.lista_arquivos.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        # Lista de arquivos
+        lista_frame = ttk.Frame(arquivo_frame)
+        lista_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
         
-        scrollbar_arquivos = ttk.Scrollbar(frame_arquivos, orient="vertical", command=self.lista_arquivos.yview)
-        scrollbar_arquivos.grid(row=0, column=1, sticky=(tk.N, tk.S))
-        self.lista_arquivos.configure(yscrollcommand=scrollbar_arquivos.set)
+        self.lista_arquivos = tk.Listbox(lista_frame, height=8, font=("Segoe UI", 9),
+                                        selectmode=tk.SINGLE, relief=tk.FLAT, bd=1)
+        self.lista_arquivos.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
-        frame_botoes = ttk.Frame(main_frame)
-        frame_botoes.grid(row=3, column=0, columnspan=3, pady=(0, 10))
+        scrollbar = ttk.Scrollbar(lista_frame, orient="vertical", command=self.lista_arquivos.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.lista_arquivos.configure(yscrollcommand=scrollbar.set)
         
-        ttk.Button(frame_botoes, text="Selecionar Arquivos", command=self.selecionar_arquivos).pack(side=tk.LEFT, padx=(0, 10))
-        ttk.Button(frame_botoes, text="Remover Selecionado", command=self.remover_arquivo).pack(side=tk.LEFT, padx=(0, 10))
-        ttk.Button(frame_botoes, text="Limpar Lista", command=self.limpar_lista).pack(side=tk.LEFT, padx=(0, 10))
+        # Botões de arquivo
+        botoes_arquivo_frame = ttk.Frame(arquivo_frame)
+        botoes_arquivo_frame.pack(fill=tk.X)
         
-        frame_opcoes = ttk.LabelFrame(main_frame, text="Opções", padding="10")
-        frame_opcoes.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
-        frame_opcoes.columnconfigure(1, weight=1)
+        ttk.Button(botoes_arquivo_frame, text="Adicionar Arquivos", 
+                  command=self.selecionar_arquivos, width=15).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(botoes_arquivo_frame, text="Remover", 
+                  command=self.remover_arquivo, width=10).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(botoes_arquivo_frame, text="Limpar Tudo", 
+                  command=self.limpar_lista, width=10).pack(side=tk.LEFT)
         
-        ttk.Label(frame_opcoes, text="Pasta de Saída:").grid(row=0, column=0, sticky=tk.W, padx=(0, 10))
-        self.label_pasta_saida = ttk.Label(frame_opcoes, text="Mesma pasta dos arquivos originais", foreground="gray")
-        self.label_pasta_saida.grid(row=0, column=1, sticky=tk.W, padx=(0, 10))
-        ttk.Button(frame_opcoes, text="Escolher Pasta", command=self.escolher_pasta_saida).grid(row=0, column=2)
+        # Seção de configurações
+        config_frame = ttk.LabelFrame(main_frame, text="Configurações", padding=15)
+        config_frame.pack(fill=tk.X, pady=(0, 15))
         
-        self.progress = ttk.Progressbar(main_frame, mode='indeterminate')
-        self.progress.grid(row=5, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=(0, 10))
+        # Pasta de saída
+        pasta_frame = ttk.Frame(config_frame)
+        pasta_frame.pack(fill=tk.X)
         
-        frame_acoes = ttk.Frame(main_frame)
-        frame_acoes.grid(row=6, column=0, columnspan=3, pady=(0, 10))
+        ttk.Label(pasta_frame, text="Pasta de saída:").pack(side=tk.LEFT)
+        self.label_pasta_saida = ttk.Label(pasta_frame, text="Mesma pasta dos arquivos originais", 
+                                          foreground="gray", font=("Segoe UI", 9))
+        self.label_pasta_saida.pack(side=tk.LEFT, padx=(10, 0), fill=tk.X, expand=True)
+        ttk.Button(pasta_frame, text="Alterar", command=self.escolher_pasta_saida, 
+                  width=8).pack(side=tk.RIGHT)
         
-        self.btn_processar = ttk.Button(frame_acoes, text="Limpar Metadados", command=self.processar_arquivos)
+        # Seção de processamento
+        processo_frame = ttk.LabelFrame(main_frame, text="Processamento", padding=15)
+        processo_frame.pack(fill=tk.X, pady=(0, 15))
+        
+        # Barra de progresso
+        self.progress_var = tk.DoubleVar()
+        self.progress = ttk.Progressbar(processo_frame, variable=self.progress_var, 
+                                       maximum=100, length=400)
+        self.progress.pack(fill=tk.X, pady=(0, 10))
+        
+        self.status_label = ttk.Label(processo_frame, text="Pronto para processar", 
+                                     font=("Segoe UI", 9))
+        self.status_label.pack()
+        
+        # Botões principais
+        botoes_frame = ttk.Frame(main_frame)
+        botoes_frame.pack(fill=tk.X, pady=(0, 15))
+        
+        self.btn_processar = ttk.Button(botoes_frame, text="Processar", 
+                                       command=self.processar_arquivos, width=15)
         self.btn_processar.pack(side=tk.LEFT, padx=(0, 10))
         
-        ttk.Button(frame_acoes, text="Visualizar Metadados", command=self.visualizar_metadados).pack(side=tk.LEFT)
+        ttk.Button(botoes_frame, text="Ver Metadados", 
+                  command=self.visualizar_metadados, width=15).pack(side=tk.LEFT)
         
-        frame_log = ttk.LabelFrame(main_frame, text="Log", padding="5")
-        frame_log.grid(row=7, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(10, 0))
-        frame_log.columnconfigure(0, weight=1)
-        frame_log.rowconfigure(0, weight=1)
+        # Log
+        log_frame = ttk.LabelFrame(main_frame, text="Log", padding=10)
+        log_frame.pack(fill=tk.BOTH, expand=True)
         
-        self.log_text = scrolledtext.ScrolledText(frame_log, height=8, width=70)
-        self.log_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.log_text = scrolledtext.ScrolledText(log_frame, height=6, font=("Consolas", 9),
+                                                 wrap=tk.WORD, relief=tk.FLAT, bd=1)
+        self.log_text.pack(fill=tk.BOTH, expand=True)
     
     def log(self, mensagem):
         self.log_text.insert(tk.END, f"{mensagem}\n")
         self.log_text.see(tk.END)
         self.root.update_idletasks()
     
+    def atualizar_status(self, texto, progresso=None):
+        self.status_label.config(text=texto)
+        if progresso is not None:
+            self.progress_var.set(progresso)
+        self.root.update_idletasks()
+    
     def verificar_ffmpeg_startup(self):
         sucesso, mensagem = verificar_ffmpeg()
         if sucesso:
-            self.log(f"✓ {mensagem}")
+            self.log("Sistema pronto")
         else:
-            self.log(f"✗ {mensagem}")
-            messagebox.showerror("Erro", f"FFmpeg não está funcionando:\n{mensagem}")
+            self.log(f"ERRO: {mensagem}")
+            messagebox.showerror("Erro", f"Sistema não está funcionando:\n{mensagem}")
     
     def selecionar_arquivos(self):
         arquivos = filedialog.askopenfilenames(
             title="Selecionar Arquivos de Vídeo",
             filetypes=[
-                ("Arquivos de Vídeo", "*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm"),
-                ("MP4", "*.mp4"),
-                ("Todos os Arquivos", "*.*")
+                ("Vídeos", "*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm"),
+                ("Todos", "*.*")
             ]
         )
         
+        adicionados = 0
         for arquivo in arquivos:
             if arquivo not in self.arquivos_selecionados:
                 if validar_arquivo_video(arquivo):
                     self.arquivos_selecionados.append(arquivo)
-                    self.lista_arquivos.insert(tk.END, os.path.basename(arquivo))
-                    self.log(f"Adicionado: {os.path.basename(arquivo)}")
+                    nome = os.path.basename(arquivo)
+                    self.lista_arquivos.insert(tk.END, nome)
+                    adicionados += 1
                 else:
-                    self.log(f"Arquivo ignorado (formato não suportado): {os.path.basename(arquivo)}")
+                    self.log(f"Formato não suportado: {os.path.basename(arquivo)}")
+        
+        if adicionados > 0:
+            self.log(f"{adicionados} arquivo(s) adicionado(s)")
+            self.atualizar_status(f"{len(self.arquivos_selecionados)} arquivo(s) selecionado(s)")
     
     def remover_arquivo(self):
         selecionado = self.lista_arquivos.curselection()
@@ -118,82 +160,116 @@ class LimpaMetadadosApp:
             arquivo_removido = self.arquivos_selecionados.pop(index)
             self.lista_arquivos.delete(index)
             self.log(f"Removido: {os.path.basename(arquivo_removido)}")
+            self.atualizar_status(f"{len(self.arquivos_selecionados)} arquivo(s) selecionado(s)")
     
     def limpar_lista(self):
         self.arquivos_selecionados.clear()
         self.lista_arquivos.delete(0, tk.END)
-        self.log("Lista de arquivos limpa")
+        self.log("Lista limpa")
+        self.atualizar_status("Pronto para processar", 0)
     
     def escolher_pasta_saida(self):
         pasta = filedialog.askdirectory(title="Escolher Pasta de Saída")
         if pasta:
             self.pasta_saida = pasta
-            self.label_pasta_saida.config(text=pasta, foreground="black")
-            self.log(f"Pasta de saída definida: {pasta}")
+            nome_pasta = os.path.basename(pasta) or pasta
+            self.label_pasta_saida.config(text=nome_pasta, foreground="black")
+            self.log(f"Pasta de saída: {nome_pasta}")
     
     def processar_arquivos(self):
         if not self.arquivos_selecionados:
-            messagebox.showwarning("Aviso", "Selecione pelo menos um arquivo!")
+            messagebox.showwarning("Aviso", "Selecione pelo menos um arquivo")
+            return
+        
+        if self.processando:
             return
         
         def processar():
-            self.btn_processar.config(state='disabled')
-            self.progress.start()
+            self.processando = True
+            self.btn_processar.config(state='disabled', text="Processando...")
             
             try:
-                resultados = processar_lote(self.arquivos_selecionados, self.pasta_saida, self.log)
+                total = len(self.arquivos_selecionados)
+                sucessos = 0
                 
-                sucessos = sum(1 for r in resultados if r['sucesso'])
-                total = len(resultados)
+                self.atualizar_status("Iniciando processamento...", 0)
+                self.log(f"Processando {total} arquivo(s)...")
                 
-                self.log(f"\n=== PROCESSAMENTO CONCLUÍDO ===")
-                self.log(f"Sucessos: {sucessos}/{total}")
+                for i, arquivo in enumerate(self.arquivos_selecionados):
+                    nome = os.path.basename(arquivo)
+                    progresso = (i / total) * 100
+                    
+                    self.atualizar_status(f"Processando: {nome}", progresso)
+                    
+                    if self.pasta_saida:
+                        nome_limpo = os.path.splitext(nome)[0] + "_limpo.mp4"
+                        arquivo_saida = os.path.join(self.pasta_saida, nome_limpo)
+                    else:
+                        arquivo_saida = None
+                    
+                    sucesso, mensagem = limpar_metadados(arquivo, arquivo_saida)
+                    
+                    if sucesso:
+                        sucessos += 1
+                        self.log(f"OK: {nome}")
+                    else:
+                        self.log(f"ERRO: {nome} - {mensagem}")
                 
-                for resultado in resultados:
-                    status = "✓" if resultado['sucesso'] else "✗"
-                    nome = os.path.basename(resultado['arquivo'])
-                    self.log(f"{status} {nome}: {resultado['mensagem']}")
+                self.atualizar_status("Processamento concluído", 100)
+                self.log(f"Concluído: {sucessos}/{total} arquivos processados")
                 
-                messagebox.showinfo("Concluído", f"Processamento finalizado!\nSucessos: {sucessos}/{total}")
+                if sucessos == total:
+                    messagebox.showinfo("Sucesso", f"Todos os {total} arquivos foram processados")
+                else:
+                    messagebox.showwarning("Concluído com Avisos", 
+                                         f"{sucessos} de {total} arquivos processados.\nVerifique o log para detalhes.")
                 
             except Exception as e:
-                self.log(f"Erro durante o processamento: {str(e)}")
-                messagebox.showerror("Erro", f"Erro durante o processamento:\n{str(e)}")
+                self.log(f"ERRO CRÍTICO: {str(e)}")
+                messagebox.showerror("Erro", f"Erro durante processamento:\n{str(e)}")
+                self.atualizar_status("Erro no processamento", 0)
             
             finally:
-                self.progress.stop()
-                self.btn_processar.config(state='normal')
+                self.processando = False
+                self.btn_processar.config(state='normal', text="Processar")
         
-        thread = threading.Thread(target=processar)
-        thread.daemon = True
+        thread = threading.Thread(target=processar, daemon=True)
         thread.start()
     
     def visualizar_metadados(self):
         selecionado = self.lista_arquivos.curselection()
         if not selecionado:
-            messagebox.showwarning("Aviso", "Selecione um arquivo na lista!")
+            messagebox.showwarning("Aviso", "Selecione um arquivo na lista")
             return
         
         arquivo = self.arquivos_selecionados[selecionado[0]]
         
         def obter_info():
-            self.log(f"Obtendo metadados de: {os.path.basename(arquivo)}")
+            nome = os.path.basename(arquivo)
+            self.log(f"Obtendo metadados: {nome}")
             metadados = obter_metadados(arquivo)
             
             def mostrar_janela():
                 janela = tk.Toplevel(self.root)
-                janela.title(f"Metadados - {os.path.basename(arquivo)}")
-                janela.geometry("600x400")
+                janela.title(f"Metadados - {nome}")
+                janela.geometry("600x450")
+                janela.resizable(True, True)
                 
-                text_widget = scrolledtext.ScrolledText(janela, wrap=tk.WORD)
-                text_widget.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                frame = ttk.Frame(janela, padding=15)
+                frame.pack(fill=tk.BOTH, expand=True)
+                
+                ttk.Label(frame, text=f"Arquivo: {nome}", font=("Segoe UI", 11, "bold")).pack(anchor=tk.W, pady=(0, 10))
+                
+                text_widget = scrolledtext.ScrolledText(frame, wrap=tk.WORD, font=("Consolas", 9))
+                text_widget.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
                 text_widget.insert('1.0', metadados)
                 text_widget.config(state=tk.DISABLED)
+                
+                ttk.Button(frame, text="Fechar", command=janela.destroy).pack()
             
             self.root.after(0, mostrar_janela)
         
-        thread = threading.Thread(target=obter_info)
-        thread.daemon = True
+        thread = threading.Thread(target=obter_info, daemon=True)
         thread.start()
 
 def main():

@@ -1,92 +1,78 @@
-# 🧹 Limpa Metadados
+# Limpa Metadados
 
-**Removedor de Metadados de Vídeos - Simples e Eficiente**
+**Removedor de metadados de arquivos de vídeo**
 
-Programa gratuito para remover todos os metadados de arquivos de vídeo baixados da internet. Proteja sua privacidade removendo informações pessoais, localização, dispositivo e outras informações sensíveis dos seus vídeos.
+Remove informações pessoais, localização GPS e outros dados sensíveis de vídeos baixados da internet.
 
-## 🚀 Download e Uso
+## Download
 
-### Como Usar
-1. **Baixe** o arquivo `LimpaMetadados.exe`
-2. **Execute** o programa (não precisa instalar nada!)
-3. **Selecione** seus arquivos de vídeo
-4. **Clique** em "Limpar Metadados"
-5. **Pronto!** Seus vídeos estarão limpos
+[Baixar LimpaMetadados.exe](https://github.com/jbrunops/lima-metadados/releases/latest/download/LimpaMetadados.exe)
 
-### 📹 Formatos Suportados
-- ✅ **MP4** (mais comum)
-- ✅ **AVI**
-- ✅ **MKV** 
-- ✅ **MOV**
-- ✅ **WMV**
-- ✅ **FLV**
-- ✅ **WebM**
+## Como Usar
 
-## 🛡️ Por que Remover Metadados?
+1. Execute o programa
+2. Adicione seus arquivos de vídeo
+3. Clique em "Processar"
+4. Aguarde a conclusão
+
+## Formatos Suportados
+
+- MP4
+- AVI
+- MKV
+- MOV
+- WMV
+- FLV
+- WebM
+
+## Recursos
+
+- Remove todos os metadados dos vídeos
+- Processamento em lote
+- Mantém a qualidade original
+- Funciona offline
+- Interface simples e intuitiva
+
+## Por que Usar
 
 ### Informações que podem estar nos seus vídeos:
-- 📍 **Localização GPS** onde o vídeo foi gravado
-- 📱 **Modelo do dispositivo** usado
-- 👤 **Nome do usuário** do sistema
-- 📅 **Data e hora** exatas
-- 🏠 **Informações do software** usado
-- 📧 **Dados pessoais** diversos
+- Localização GPS onde foi gravado
+- Modelo do dispositivo usado
+- Nome do usuário do sistema
+- Data e hora exatas
+- Software utilizado
+- Outros dados pessoais
 
-### Proteja sua privacidade:
-- ❌ Remova rastros pessoais
-- ❌ Elimine dados de localização  
-- ❌ Limpe informações do dispositivo
-- ✅ Compartilhe vídeos com segurança
+### Benefícios:
+- Protege sua privacidade
+- Remove rastros pessoais
+- Elimina dados de localização
+- Permite compartilhamento seguro
 
-## ⚡ Recursos
+## Requisitos
 
-- 🚀 **Ultra rápido** - Não recodifica o vídeo
-- 🔒 **100% offline** - Seus dados não saem do computador
-- 📁 **Processamento em lote** - Limpe vários vídeos de uma vez
-- 🎯 **Interface simples** - Apenas arrastar e soltar
-- 💾 **Mantém qualidade** - Vídeo inalterado, apenas metadados removidos
-- 🆓 **Completamente gratuito**
+- Windows 7, 8, 10 ou 11
+- Não requer instalação
+- Funciona sem conexão à internet
 
-## 🖥️ Requisitos
+## Importante
 
-- Windows 7/8/10/11
-- Nenhuma instalação necessária
-- Funciona offline
+- Sempre faça backup dos arquivos originais
+- O programa não altera a qualidade do vídeo
+- Completamente gratuito
 
-## ⚠️ Importante
+## Problemas Comuns
 
-- **Sempre faça backup** dos seus vídeos originais
-- O programa **não altera** a qualidade do vídeo
-- **Não requer internet** para funcionar
-- **Gratuito** para uso pessoal e comercial
+**Windows Defender bloqueia o programa:**
+- É um falso positivo comum
+- O programa é seguro e não acessa a internet
 
-## 🔍 Visualizar Metadados
-
-Antes de limpar, você pode **visualizar** quais metadados existem no seu vídeo:
-
-1. Selecione o arquivo na lista
-2. Clique em "Visualizar Metadados"
-3. Veja todas as informações que serão removidas
-
-## 💡 Dicas de Uso
-
-- **Arraste e solte** arquivos diretamente na janela
-- Use **"Escolher Pasta"** para salvar arquivos limpos em local específico
-- **Múltiplos arquivos** podem ser processados ao mesmo tempo
-- Acompanhe o **progresso** na barra e no log
-
-## 🆘 Problemas Comuns
-
-**Windows Defender alerta sobre o programa:**
-- É um **falso positivo** comum em executáveis pequenos
-- O programa é **100% seguro** e não acessa a internet
-
-**Arquivo muito grande demora para processar:**
-- É normal, arquivos grandes levam mais tempo
-- O programa **não trava**, apenas aguarde
+**Arquivo grande demora para processar:**
+- Normal para arquivos grandes
+- Aguarde o processamento completar
 
 **Erro ao processar arquivo:**
-- Verifique se o arquivo não está **corrompido**
+- Verifique se o arquivo não está corrompido
 - Alguns formatos específicos podem não ser suportados
 
 ## 📞 Suporte
