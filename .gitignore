@@ -48,4 +48,7 @@ Thumbs.db
 # Build artifacts
 *.exe
 *.zip
-*.tar.gz 
+*.tar.gz
+
+# FFmpeg (keep source but ignore build copies)
+!/ffmpeg.exe 
