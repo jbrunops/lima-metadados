@@ -11,7 +11,7 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ### Versão Atual: v1.0.1
 
-**[⬇️ Baixar LimpaMetadados v1.0.1](https://github.com/jbrunops/limpa-metadados/releases/latest/download/LimpaMetadados_v1.0.1_20250611.zip)**
+**[⬇️ Baixar LimpaMetadados v1.0.1](https://github.com/jbrunops/limpa-metadados/archive/refs/tags/v1.0.1.zip)**
 
 > 💡 **Novo na v1.0.1:** Janela com altura otimizada e tamanho fixo (não redimensionável)
 
