@@ -9,18 +9,18 @@ from datetime import datetime
 
 def verificar_dependencias():
     """Verifica e instala dependências necessárias"""
-    print("🔍 Verificando dependências...")
+    print("Verificando dependencias...")
     
     try:
         import PyInstaller
-        print("✅ PyInstaller instalado")
+        print("PyInstaller instalado")
     except ImportError:
-        print("⚠️  PyInstaller não encontrado. Instalando...")
+        print("PyInstaller nao encontrado. Instalando...")
         try:
             subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller==6.11.0"], check=True)
-            print("✅ PyInstaller instalado com sucesso")
+            print("PyInstaller instalado com sucesso")
         except subprocess.CalledProcessError:
-            print("❌ Falha ao instalar PyInstaller")
+            print("Falha ao instalar PyInstaller")
             return False
     
     ffmpeg_path = "ffmpeg.exe"
@@ -162,7 +162,7 @@ def criar_pacote_zip(executavel_path):
 def main():
     """Função principal de build"""
     print("=" * 50)
-    print("🏗️  BUILD LIMPA METADADOS v1.0.3 - VERSÃO COM CORREÇÃO CRÍTICA DE CAMINHOS")
+    print("BUILD LIMPA METADADOS v1.0.3 - VERSAO COM CORRECAO CRITICA DE CAMINHOS")
     print("=" * 50)
     print()
     
