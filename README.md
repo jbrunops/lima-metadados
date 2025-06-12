@@ -9,32 +9,42 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ## 📥 Download
 
-### Versão Atual: v1.0.2
+### ⬇️ Download Direto - Versão v1.0.2
 
-**[⬇️ Baixar LimpaMetadados v1.0.2](https://github.com/jbrunops/limpa-metadados/archive/refs/tags/v1.0.2.zip)**
+**Para usar o programa imediatamente:**
+
+🔗 **[Baixar LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.2/LimpaMetadados_v1.0.2_20250612.exe)**
+
+🔗 **[Baixar ZIP Completo](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.2/LimpaMetadados_v1.0.2_20250612.zip)**
 
 > 🛡️ **Novo na v1.0.2:** MELHORIAS CRÍTICAS DE SEGURANÇA - Sanitização de arquivos, validação MIME real, controle de recursos aprimorado e sistema de auditoria completo
 
 ---
 
-### Outras opções de download:
-- 📦 [Todas as versões](https://github.com/jbrunops/limpa-metadados/releases)
-- 🔧 [Código fonte](https://github.com/jbrunops/limpa-metadados/archive/refs/heads/main.zip)
+### 📦 Outras opções:
+- 🔍 [Ver todas as versões](https://github.com/jbrunops/limpa-metadados/releases)
+- 📋 [Código fonte completo](https://github.com/jbrunops/limpa-metadados/archive/refs/heads/main.zip)
 
-## 🚀 Instalação
+## 🚀 Como Instalar e Usar
 
-1. **Baixe** o arquivo ZIP da versão mais recente
-2. **Extraia** o conteúdo para uma pasta de sua escolha
-3. **Execute** o arquivo `LimpaMetadados.exe`
-4. **Pronto!** Não requer instalação adicional
+### Instalação (Método 1 - Recomendado):
+1. **Baixe** o arquivo `LimpaMetadados.exe` usando o link acima
+2. **Salve** em uma pasta de sua escolha
+3. **Execute** clicando duas vezes no arquivo
+4. **Pronto!** Não precisa instalar nada
 
-## 📖 Como Usar
+### Instalação (Método 2 - ZIP Completo):
+1. **Baixe** o arquivo ZIP completo
+2. **Extraia** para uma pasta
+3. **Execute** o `LimpaMetadados.exe`
+4. **Leia** o arquivo README.txt incluído
 
-1. **Execute** o programa LimpaMetadados.exe
-2. **Adicione** seus arquivos de vídeo clicando em "Adicionar Arquivos"
-3. **Configure** a pasta de saída (opcional)
+### Como Usar o Programa:
+1. **Abra** o LimpaMetadados.exe
+2. **Clique** em "Adicionar Arquivos" e selecione seus vídeos
+3. **Configure** a pasta de saída (ou deixe automático)
 4. **Clique** em "Processar Arquivos"
-5. **Aguarde** a conclusão do processamento
+5. **Aguarde** o processamento terminar
 
 ## 📹 Formatos Suportados
 
