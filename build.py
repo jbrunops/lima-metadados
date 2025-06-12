@@ -99,10 +99,10 @@ def verificar_executavel():
 
 def criar_readme_distribuicao():
     """Cria README para distribuição"""
-    readme_content = """# LimpaMetadados v1.0.1
+    readme_content = """# LimpaMetadados v1.0.2
 
 ## 📋 Sobre
-Ferramenta para remoção completa de metadados de arquivos de vídeo.
+Ferramenta para remoção completa de metadados de arquivos de vídeo com melhorias críticas de segurança.
 
 ## 🚀 Como Usar
 1. Execute LimpaMetadados.exe
@@ -143,7 +143,7 @@ Software gratuito para uso pessoal e comercial.
 def criar_pacote_zip(executavel_path):
     """Cria arquivo ZIP para distribuição"""
     data_atual = datetime.now().strftime("%Y%m%d")
-    nome_zip = f"LimpaMetadados_v1.0.1_{data_atual}.zip"
+    nome_zip = f"LimpaMetadados_v1.0.2_{data_atual}.zip"
     
     print(f"📦 Criando pacote: {nome_zip}")
     
@@ -162,7 +162,7 @@ def criar_pacote_zip(executavel_path):
 def main():
     """Função principal de build"""
     print("=" * 50)
-    print("🏗️  BUILD LIMPA METADADOS v1.0.1")
+    print("🏗️  BUILD LIMPA METADADOS v1.0.2 - VERSÃO COM MELHORIAS DE SEGURANÇA")
     print("=" * 50)
     print()
     

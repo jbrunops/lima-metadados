@@ -9,11 +9,11 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ## 📥 Download
 
-### Versão Atual: v1.0.1
+### Versão Atual: v1.0.2
 
-**[⬇️ Baixar LimpaMetadados v1.0.1](https://github.com/jbrunops/limpa-metadados/archive/refs/tags/v1.0.1.zip)**
+**[⬇️ Baixar LimpaMetadados v1.0.2](https://github.com/jbrunops/limpa-metadados/archive/refs/tags/v1.0.2.zip)**
 
-> 💡 **Novo na v1.0.1:** Janela com altura otimizada e tamanho fixo (não redimensionável)
+> 🛡️ **Novo na v1.0.2:** MELHORIAS CRÍTICAS DE SEGURANÇA - Sanitização de arquivos, validação MIME real, controle de recursos aprimorado e sistema de auditoria completo
 
 ---
 
@@ -101,7 +101,32 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 - Verifique se o arquivo não está corrompido
 - Alguns formatos específicos podem não ser suportados
 
+## 🛡️ Segurança
+
+### Melhorias de Segurança v1.0.2
+- **Sanitização de arquivos**: Remove caracteres perigosos que poderiam ser explorados
+- **Validação MIME real**: Verifica se arquivos são realmente vídeos através de assinatura binária
+- **Controle de recursos**: Timeout de 5s para verificações, 5min para processamento
+- **Auditoria completa**: Log SHA-256 de todos os arquivos processados
+- **Limite de tamanho**: Máximo 10GB por arquivo
+- **Proteção contra injeção**: Neutraliza tentativas de execução de comandos maliciosos
+
+### Arquivos de Log
+- `limpa_metadados_security.log`: Auditoria completa de todas as operações
+- Logs incluem: hash de arquivos, tempo de execução, tentativas de acesso suspeitas
+
 ## 📋 Changelog
+
+### v1.0.2 (2024-06-11) - VERSÃO COM MELHORIAS CRÍTICAS DE SEGURANÇA
+- 🛡️ **CRÍTICO:** Sistema de sanitização de nomes de arquivos
+- 🛡️ **CRÍTICO:** Validação MIME real com verificação de assinatura binária
+- 🛡️ **CRÍTICO:** Controle de recursos com timeout de 5s (verificação) e 5min (processamento)
+- 🛡️ **CRÍTICO:** Sistema de auditoria com hash SHA-256 de todos os arquivos
+- 🛡️ **CRÍTICO:** Limite de 10GB por arquivo
+- 📊 **Novo:** Interface com feedback de segurança detalhado
+- 📝 **Novo:** Log completo de operações em `limpa_metadados_security.log`
+- ⚡ **Melhoria:** Timeout otimizado de 10s para 5s
+- 🔒 **Melhoria:** Proteção contra injeção de comandos
 
 ### v1.0.1 (2025-06-11)
 - ✨ **Novo:** Janela com altura otimizada (800px) para mostrar todos os campos

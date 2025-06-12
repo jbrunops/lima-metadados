@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import threading
 import os
-from core import verificar_ffmpeg, limpar_metadados, processar_lote, validar_arquivo_video, obter_metadados
+import logging
+from core import verificar_ffmpeg, limpar_metadados, processar_lote, validar_arquivo_video, obter_metadados, security_logger
 
 class LimpaMetadadosApp:
     def __init__(self, root):
@@ -124,9 +125,11 @@ class LimpaMetadadosApp:
     def verificar_ffmpeg_startup(self):
         sucesso, mensagem = verificar_ffmpeg()
         if sucesso:
-            self.log("Sistema pronto")
+            self.log("Sistema pronto - Versão 1.0.2 com melhorias de segurança")
+            security_logger.info("Interface iniciada com sucesso")
         else:
             self.log(f"ERRO: {mensagem}")
+            security_logger.error(f"Falha na inicialização: {mensagem}")
             messagebox.showerror("Erro", f"Sistema não está funcionando:\n{mensagem}")
     
     def selecionar_arquivos(self):
@@ -139,6 +142,7 @@ class LimpaMetadadosApp:
         )
         
         adicionados = 0
+        rejeitados = 0
         for arquivo in arquivos:
             if arquivo not in self.arquivos_selecionados:
                 if validar_arquivo_video(arquivo):
@@ -146,12 +150,19 @@ class LimpaMetadadosApp:
                     nome = os.path.basename(arquivo)
                     self.lista_arquivos.insert(tk.END, nome)
                     adicionados += 1
+                    security_logger.info(f"Arquivo aceito: {nome}")
                 else:
-                    self.log(f"Formato não suportado: {os.path.basename(arquivo)}")
+                    rejeitados += 1
+                    self.log(f"Arquivo rejeitado por segurança: {os.path.basename(arquivo)}")
+                    security_logger.warning(f"Arquivo rejeitado: {os.path.basename(arquivo)}")
         
         if adicionados > 0:
             self.log(f"{adicionados} arquivo(s) adicionado(s)")
             self.atualizar_status(f"{len(self.arquivos_selecionados)} arquivo(s) selecionado(s)")
+        
+        if rejeitados > 0:
+            messagebox.showwarning("Arquivos Rejeitados", 
+                                 f"{rejeitados} arquivo(s) foram rejeitados por não passarem na validação de segurança.")
     
     def remover_arquivo(self):
         selecionado = self.lista_arquivos.curselection()
