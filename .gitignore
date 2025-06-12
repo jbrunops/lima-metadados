@@ -50,5 +50,14 @@ Thumbs.db
 *.zip
 *.tar.gz
 
-# FFmpeg (keep source but ignore build copies)
-!/ffmpeg.exe 
+# FFmpeg - too large for git
+ffmpeg.exe
+
+# PyInstaller spec files (contain local paths)
+*.spec
+
+# Distribution files
+README_DISTRIBUICAO.txt
+
+# Version info (contains build details)
+version_info.txt 
