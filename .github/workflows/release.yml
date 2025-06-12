@@ -1,0 +1,90 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller==6.11.0
+        pip install -r requirements.txt
+    
+    - name: Build executable
+      run: |
+        python build.py
+    
+    - name: Get version
+      id: get_version
+      run: |
+        $version = "${{ github.ref_name }}"
+        $date = Get-Date -Format "yyyyMMdd"
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "DATE=$date" >> $env:GITHUB_OUTPUT
+        echo "EXE_NAME=LimpaMetadados_${version}_${date}.exe" >> $env:GITHUB_OUTPUT
+        echo "ZIP_NAME=LimpaMetadados_${version}_${date}.zip" >> $env:GITHUB_OUTPUT
+    
+    - name: Prepare release assets
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $date = "${{ steps.get_version.outputs.DATE }}"
+        
+        # Renomeia o executável
+        Copy-Item "dist\LimpaMetadados.exe" "LimpaMetadados_${version}_${date}.exe"
+        
+        # Cria ZIP com executável e documentação
+        Compress-Archive -Path "dist\LimpaMetadados.exe", "README_DISTRIBUICAO.txt" -DestinationPath "LimpaMetadados_${version}_${date}.zip"
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: LimpaMetadados ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          # LimpaMetadados ${{ steps.get_version.outputs.VERSION }}
+          
+          ## 🎯 O que há de novo
+          - Melhorias críticas de segurança
+          - Interface otimizada
+          - Processamento mais rápido
+          - Redução de falsos positivos em antivírus
+          
+          ## 📁 Arquivos disponíveis
+          - **LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.exe** - Executável standalone (Windows)
+          - **LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.zip** - Pacote completo com documentação
+          - **Source code** - Código fonte
+          
+          ## 🚀 Como usar
+          1. Baixe o arquivo `.exe` ou `.zip`
+          2. Execute LimpaMetadados.exe
+          3. Adicione seus vídeos e processe
+          
+          ## 🛡️ Segurança
+          - Funciona 100% offline
+          - Não acessa a internet
+          - Código open source verificável
+          - Alguns antivírus podem dar falso positivo (é normal)
+          
+          ## 📋 Requisitos
+          - Windows 7/8/10/11
+          - Não requer instalação do Python
+        files: |
+          LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.exe
+          LimpaMetadados_${{ steps.get_version.outputs.VERSION }}_${{ steps.get_version.outputs.DATE }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

@@ -9,15 +9,15 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ## 📥 Download
 
-### ⬇️ Download Direto - Versão v1.0.2
+### ⬇️ Download Direto - Versão v1.0.3
 
 **Para usar o programa imediatamente:**
 
-🔗 **[Baixar LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.2/LimpaMetadados_v1.0.2_20250612.exe)**
+🔗 **[Baixar LimpaMetadados.exe](https://github.com/jbrunops/lima-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.exe)**
 
-🔗 **[Baixar ZIP Completo](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.2/LimpaMetadados_v1.0.2_20250612.zip)**
+🔗 **[Baixar ZIP Completo](https://github.com/jbrunops/lima-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.zip)**
 
-> 🛡️ **Novo na v1.0.2:** MELHORIAS CRÍTICAS DE SEGURANÇA - Sanitização de arquivos, validação MIME real, controle de recursos aprimorado e sistema de auditoria completo
+> 🛡️ **Novo na v1.0.3:** CORREÇÃO CRÍTICA DE CAMINHOS - Melhora no manuseio de caminhos de arquivos e diretórios
 
 ---
 
@@ -126,6 +126,12 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 - Logs incluem: hash de arquivos, tempo de execução, tentativas de acesso suspeitas
 
 ## 📋 Changelog
+
+### v1.0.3 (2024-06-12) - VERSÃO COM CORREÇÃO CRÍTICA DE CAMINHOS
+- 🛠️ **CRÍTICO:** Correção no manuseio de caminhos de arquivos com caracteres especiais
+- 🛠️ **CRÍTICO:** Melhoria na detecção de diretórios de saída
+- 📁 **Melhoria:** Processamento mais robusto de nomes de arquivos
+- 🔧 **Correção:** Bugs relacionados a caminhos em diferentes sistemas
 
 ### v1.0.2 (2024-06-11) - VERSÃO COM MELHORIAS CRÍTICAS DE SEGURANÇA
 - 🛡️ **CRÍTICO:** Sistema de sanitização de nomes de arquivos
