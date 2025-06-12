@@ -8,8 +8,8 @@ class LimpaMetadadosApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Limpa Metadados")
-        self.root.geometry("750x600")
-        self.root.resizable(True, True)
+        self.root.geometry("750x800")
+        self.root.resizable(False, False)
         self.root.configure(bg='#f0f0f0')
         
         self.arquivos_selecionados = []
