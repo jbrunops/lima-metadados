@@ -60,4 +60,15 @@ ffmpeg.exe
 README_DISTRIBUICAO.txt
 
 # Version info (contains build details)
-version_info.txt 
+version_info.txt
+
+# Application logs
+*.log
+limpa_metadados_security.log
+
+# Test files
+test_*.py
+
+# Temporary files
+*.tmp
+*.temp 
