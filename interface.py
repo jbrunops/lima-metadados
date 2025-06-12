@@ -125,7 +125,7 @@ class LimpaMetadadosApp:
     def verificar_ffmpeg_startup(self):
         sucesso, mensagem = verificar_ffmpeg()
         if sucesso:
-            self.log("Sistema pronto - Versão 1.0.2 com melhorias de segurança")
+            self.log("Sistema pronto - Versão 1.0.3 com correção crítica de caminhos")
             security_logger.info("Interface iniciada com sucesso")
         else:
             self.log(f"ERRO: {mensagem}")

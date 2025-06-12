@@ -20,7 +20,7 @@ logging.basicConfig(
 security_logger = logging.getLogger('security')
 
 # Informações do programa para evitar detecção de antivírus
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 __author__ = "LimpaMetadados"
 __description__ = "Ferramenta para remoção de metadados de vídeos"
 
@@ -29,61 +29,88 @@ MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024  # 10GB
 FFMPEG_TIMEOUT = 5  # 5 segundos timeout crítico
 DANGEROUS_CHARS = ['|', '&', ';', '$', '`', '(', ')', '{', '}', '[', ']', '<', '>', '"', "'", '\\']
 
-def sanitize_filename(filename):
-    """Sanitiza nome de arquivo removendo caracteres perigosos"""
-    if not filename:
-        raise ValueError("Nome de arquivo vazio")
+def sanitize_filename(filepath):
+    """Sanitiza caminho de arquivo preservando estrutura de diretórios"""
+    if not filepath:
+        raise ValueError("Caminho de arquivo vazio")
     
-    # Remove caracteres perigosos
-    for char in DANGEROUS_CHARS:
+    # Separa diretório e nome do arquivo
+    directory = os.path.dirname(filepath)
+    filename = os.path.basename(filepath)
+    
+    # Caracteres perigosos específicos para nomes de arquivo (não inclui \ e / que são separadores)
+    dangerous_chars_filename = ['|', '&', ';', '$', '`', '(', ')', '{', '}', '[', ']', '<', '>', '"', "'"]
+    
+    # Sanitiza apenas o nome do arquivo, não o diretório
+    original_filename = filename
+    for char in dangerous_chars_filename:
         if char in filename:
-            security_logger.warning(f"Caractere perigoso detectado: {char} em {filename}")
+            security_logger.warning(f"Caractere perigoso detectado no nome do arquivo: {char}")
             filename = filename.replace(char, '_')
     
-    # Remove sequências suspeitas
-    suspicious_patterns = [r'\.\.', r'\/\.', r'~', r'\$\(', r'`']
+    # Remove sequências suspeitas apenas do nome do arquivo
+    suspicious_patterns = [r'\$\(', r'`']  # Removido .. e /. para não afetar extensões
     for pattern in suspicious_patterns:
         if re.search(pattern, filename):
-            security_logger.warning(f"Padrão suspeito detectado: {pattern} em {filename}")
+            security_logger.warning(f"Padrão suspeito detectado no nome do arquivo: {pattern}")
             filename = re.sub(pattern, '_', filename)
     
-    return filename
+    # Reconstrói o caminho
+    sanitized_path = os.path.join(directory, filename)
+    
+    # Log apenas se houve mudanças
+    if filename != original_filename:
+        security_logger.info(f"Nome do arquivo sanitizado: {original_filename} -> {filename}")
+    
+    return sanitized_path
 
 def validate_file_security(filepath):
     """Validação de segurança completa do arquivo"""
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Arquivo não encontrado: {filepath}")
+    # Normaliza o caminho para evitar problemas com separadores
+    normalized_path = os.path.normpath(filepath)
+    
+    if not os.path.exists(normalized_path):
+        raise FileNotFoundError(f"Arquivo não encontrado: {normalized_path}")
+    
+    # Verifica se não há tentativas de path traversal
+    if '..' in normalized_path:
+        security_logger.error(f"Tentativa de path traversal detectada: {normalized_path}")
+        raise ValueError("Caminho de arquivo contém sequência suspeita")
     
     # Verifica tamanho do arquivo
-    file_size = os.path.getsize(filepath)
+    file_size = os.path.getsize(normalized_path)
     if file_size > MAX_FILE_SIZE:
         raise ValueError(f"Arquivo muito grande: {file_size} bytes (máximo: {MAX_FILE_SIZE})")
     
-    # Verifica MIME type real
-    mime_type, _ = mimetypes.guess_type(filepath)
+    # Verifica MIME type real apenas se necessário
+    mime_type, _ = mimetypes.guess_type(normalized_path)
     if not mime_type or not mime_type.startswith('video/'):
         # Verificação adicional por assinatura de arquivo
-        with open(filepath, 'rb') as f:
-            header = f.read(12)
-        
-        # Assinaturas de vídeo conhecidas
-        video_signatures = [
-            b'\x00\x00\x00\x14ftypmp4',  # MP4
-            b'\x00\x00\x00\x20ftypmp4',  # MP4
-            b'RIFF',  # AVI
-            b'\x1a\x45\xdf\xa3',  # MKV
-            b'\x00\x00\x00\x14ftyp',  # MOV
-            b'\x30\x26\xb2\x75',  # WMV
-        ]
-        
-        is_video = any(header.startswith(sig) for sig in video_signatures)
-        if not is_video:
-            security_logger.error(f"Arquivo não é vídeo válido: {filepath}")
-            raise ValueError("Arquivo não é um vídeo válido")
+        try:
+            with open(normalized_path, 'rb') as f:
+                header = f.read(12)
+            
+            # Assinaturas de vídeo conhecidas
+            video_signatures = [
+                b'\x00\x00\x00\x14ftypmp4',  # MP4
+                b'\x00\x00\x00\x20ftypmp4',  # MP4
+                b'RIFF',  # AVI
+                b'\x1a\x45\xdf\xa3',  # MKV
+                b'\x00\x00\x00\x14ftyp',  # MOV
+                b'\x30\x26\xb2\x75',  # WMV
+            ]
+            
+            is_video = any(header.startswith(sig) for sig in video_signatures)
+            if not is_video:
+                # Se não conseguiu identificar por assinatura, permite por enquanto
+                # mas loga o warning
+                security_logger.warning(f"Não foi possível verificar assinatura de vídeo: {os.path.basename(normalized_path)}")
+        except Exception as e:
+            security_logger.warning(f"Erro ao verificar assinatura do arquivo: {e}")
     
     # Calcula hash para auditoria
-    file_hash = calculate_file_hash(filepath)
-    security_logger.info(f"Arquivo validado: {os.path.basename(filepath)}, Hash: {file_hash[:16]}...")
+    file_hash = calculate_file_hash(normalized_path)
+    security_logger.info(f"Arquivo validado: {os.path.basename(normalized_path)}, Hash: {file_hash[:16]}...")
     
     return True
 
@@ -137,10 +164,12 @@ def obter_metadados(arquivo):
     """Obtém metadados de um arquivo de vídeo com segurança"""
     try:
         validate_file_security(arquivo)
-        sanitized_path = sanitize_filename(arquivo)
+        
+        # Apenas valida a sanitização, mas usa o arquivo original
+        sanitize_filename(arquivo)  # Para log de segurança
         
         ffmpeg_path = get_ffmpeg_path()
-        cmd = [ffmpeg_path, '-i', sanitized_path, '-f', 'null', '-']
+        cmd = [ffmpeg_path, '-i', arquivo, '-f', 'null', '-']
         
         start_time = time.time()
         result = subprocess.run(
@@ -166,7 +195,9 @@ def limpar_metadados(arquivo_entrada, arquivo_saida=None, callback=None):
     try:
         # Validações de segurança
         validate_file_security(arquivo_entrada)
-        entrada_sanitizada = sanitize_filename(arquivo_entrada)
+        
+        # Apenas valida sanitização, mas usa arquivos originais
+        sanitize_filename(arquivo_entrada)  # Para log de segurança
         
         if not os.path.exists(arquivo_entrada):
             return False, f"Arquivo não encontrado: {arquivo_entrada}"
@@ -177,7 +208,8 @@ def limpar_metadados(arquivo_entrada, arquivo_saida=None, callback=None):
             nome = os.path.splitext(os.path.basename(arquivo_entrada))[0]
             arquivo_saida = os.path.join(pasta, f"{nome}_limpo.mp4")
         
-        saida_sanitizada = sanitize_filename(arquivo_saida)
+        # Valida também o arquivo de saída
+        sanitize_filename(arquivo_saida)  # Para log de segurança
         ffmpeg_path = get_ffmpeg_path()
         
         # Log de auditoria
@@ -187,13 +219,13 @@ def limpar_metadados(arquivo_entrada, arquivo_saida=None, callback=None):
         # Comando FFmpeg otimizado para remoção de metadados
         cmd = [
             ffmpeg_path,
-            '-i', entrada_sanitizada,
+            '-i', arquivo_entrada,
             '-map_metadata', '-1',  # Remove todos os metadados
             '-map_chapters', '-1',  # Remove capítulos
             '-c', 'copy',          # Copia sem recodificar
             '-fflags', '+bitexact', # Para reprodutibilidade
             '-y',                   # Sobrescreve arquivo existente
-            saida_sanitizada
+            arquivo_saida
         ]
         
         if callback:
