@@ -9,15 +9,16 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 
 ## 📥 Download
 
-### ⬇️ Download Direto - Versão v1.0.3
+### ⬇️ Download Direto - Versão v1.0.3 ✅ **DISPONÍVEL AGORA!**
 
-**Para usar o programa imediatamente:**
+**📱 Baixe e use imediatamente:**
 
-🔗 **[Baixar LimpaMetadados.exe](https://github.com/jbrunops/lima-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.exe)**
+🔗 **[⬇️ LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.exe)** *(Recomendado)*
 
-🔗 **[Baixar ZIP Completo](https://github.com/jbrunops/lima-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.zip)**
+🔗 **[📦 ZIP Completo](https://github.com/jbrunops/limpa-metadados/releases/download/v1.0.3/LimpaMetadados_v1.0.3_20250612.zip)** *(Com documentação)*
 
-> 🛡️ **Novo na v1.0.3:** CORREÇÃO CRÍTICA DE CAMINHOS - Melhora no manuseio de caminhos de arquivos e diretórios
+> 🛡️ **Novo na v1.0.3:** CORREÇÃO CRÍTICA DE CAMINHOS - Melhora no manuseio de caminhos de arquivos e diretórios  
+> ✅ **Release publicado e funcionando!** | 📅 **12 Jun 2024**
 
 ---
 
