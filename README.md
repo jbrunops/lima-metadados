@@ -1,37 +1,63 @@
 # Limpa Metadados
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/jbrunops/limpa-metadados)
+![GitHub downloads](https://img.shields.io/github/downloads/jbrunops/limpa-metadados/total)
+
 **Removedor de metadados de arquivos de vídeo**
 
 Remove informações pessoais, localização GPS e outros dados sensíveis de vídeos baixados da internet.
 
-## Download
+## 📥 Download
 
-[Baixar LimpaMetadados.exe](https://github.com/jbrunops/limpa-metadados/releases/latest/download/LimpaMetadados.exe)
+### Versão Atual: v1.0.1
 
-## Como Usar
+**[⬇️ Baixar LimpaMetadados v1.0.1](https://github.com/jbrunops/limpa-metadados/releases/latest/download/LimpaMetadados_v1.0.1_20250611.zip)**
 
-1. Execute o programa
-2. Adicione seus arquivos de vídeo
-3. Clique em "Processar"
-4. Aguarde a conclusão
+> 💡 **Novo na v1.0.1:** Janela com altura otimizada e tamanho fixo (não redimensionável)
 
-## Formatos Suportados
+---
 
-- MP4
-- AVI
-- MKV
-- MOV
-- WMV
-- FLV
-- WebM
+### Outras opções de download:
+- 📦 [Todas as versões](https://github.com/jbrunops/limpa-metadados/releases)
+- 🔧 [Código fonte](https://github.com/jbrunops/limpa-metadados/archive/refs/heads/main.zip)
 
-## Recursos
+## 🚀 Instalação
 
-- Remove todos os metadados dos vídeos
-- Processamento em lote
-- Mantém a qualidade original
-- Funciona offline
-- Interface simples e intuitiva
+1. **Baixe** o arquivo ZIP da versão mais recente
+2. **Extraia** o conteúdo para uma pasta de sua escolha
+3. **Execute** o arquivo `LimpaMetadados.exe`
+4. **Pronto!** Não requer instalação adicional
+
+## 📖 Como Usar
+
+1. **Execute** o programa LimpaMetadados.exe
+2. **Adicione** seus arquivos de vídeo clicando em "Adicionar Arquivos"
+3. **Configure** a pasta de saída (opcional)
+4. **Clique** em "Processar Arquivos"
+5. **Aguarde** a conclusão do processamento
+
+## 📹 Formatos Suportados
+
+| Formato | Extensão | Status |
+|---------|----------|--------|
+| MP4     | `.mp4`   | ✅ Suportado |
+| AVI     | `.avi`   | ✅ Suportado |
+| MKV     | `.mkv`   | ✅ Suportado |
+| MOV     | `.mov`   | ✅ Suportado |
+| WMV     | `.wmv`   | ✅ Suportado |
+| FLV     | `.flv`   | ✅ Suportado |
+| WebM    | `.webm`  | ✅ Suportado |
+
+## ✨ Recursos
+
+- 🧹 **Remove todos os metadados** dos vídeos
+- 📦 **Processamento em lote** (múltiplos arquivos)
+- 🎯 **Mantém a qualidade original** do vídeo
+- 🔒 **Funciona offline** (sem conexão à internet)
+- 🖥️ **Interface simples e intuitiva**
+- ⚡ **Processamento rápido** com FFmpeg
+- 📊 **Log detalhado** do processamento
+- 🔧 **Não requer instalação**
 
 ## Por que Usar
 
@@ -75,4 +101,27 @@ Remove informações pessoais, localização GPS e outros dados sensíveis de v�
 - Verifique se o arquivo não está corrompido
 - Alguns formatos específicos podem não ser suportados
 
- 
+## 📋 Changelog
+
+### v1.0.1 (2025-06-11)
+- ✨ **Novo:** Janela com altura otimizada (800px) para mostrar todos os campos
+- 🔒 **Novo:** Janela agora é fixa (não redimensionável)
+- 🐛 **Correção:** Melhor visualização da interface
+- 📦 **Build:** Nova versão compilada disponível
+
+### v1.0.0 (2025-06-11)
+- 🎉 **Inicial:** Primeira versão estável
+- ✨ **Recursos:** Remoção completa de metadados
+- ✨ **Recursos:** Processamento em lote
+- ✨ **Recursos:** Interface gráfica intuitiva
+- ✨ **Recursos:** Suporte a múltiplos formatos de vídeo
+
+---
+
+<div align="center">
+
+**⭐ Se este projeto foi útil para você, considere dar uma estrela!**
+
+**🤝 Contribuições são bem-vindas!**
+
+</div>
